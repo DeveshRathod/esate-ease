@@ -18,7 +18,7 @@ mongoose
   .catch((err) => {
     console.log(err.message);
   });
-
+console.log("Hello2");
 app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
 
