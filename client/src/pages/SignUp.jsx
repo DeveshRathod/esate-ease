@@ -47,30 +47,35 @@ const SignUp = () => {
         <input
           type="text"
           placeholder="username"
-          className=" border p-3 rounded-lg"
+          className=" border p-3 rounded-lg bg-[#efe7e1]"
           id="username"
           onChange={handleChange}
         />
         <input
           type="email"
           placeholder="email"
-          className=" border p-3 rounded-lg"
+          className=" border p-3 rounded-lg bg-[#efe7e1]"
           id="email"
           onChange={handleChange}
         />
         <input
           type="password"
           placeholder="password"
-          className=" border p-3 rounded-lg"
+          className=" border p-3 rounded-lg bg-[#efe7e1]"
           id="password"
           onChange={handleChange}
         />
         <button
           disabled={loading}
-          className=" bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80 "
+          className=" bg-[#ac7e60] text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80 "
         >
           {loading ? "Loading" : "Sign Up"}
         </button>
+        <div className=" flex justify-center items-center gap-8">
+          <div className=" bg-[#ac7e60] w-2/5 h-1"></div>
+          <p>Or</p>
+          <div className=" bg-[#ac7e60] w-2/5 h-1"></div>
+        </div>
         <OAuth />
       </form>
       <div className=" flex gap-2 m-5">
