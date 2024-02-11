@@ -133,3 +133,79 @@ export const getListings = async (req, res, next) => {
     next(error);
   }
 };
+
+export const addlike = async (req, res) => {
+  try {
+    const listing = await Listing.findById(req.params.id);
+
+    if (listing.likes.includes(req.user.id)) {
+      return res.status(200).json({
+        likes: listing.likes.length,
+        dislikes: listing.dislikes.length,
+      });
+    }
+
+    listing.likes.push(req.user.id);
+    listing.dislikes.pull(req.user.id);
+
+    const updatedListing = await listing.save();
+    res.status(200).json({
+      likes: updatedListing.likes.length,
+      dislikes: updatedListing.dislikes.length,
+    });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+export const adddislike = async (req, res) => {
+  try {
+    const listing = await Listing.findById(req.params.id);
+
+    if (listing.dislikes.includes(req.user.id)) {
+      return res.status(200).json({
+        likes: listing.likes.length,
+        dislikes: listing.dislikes.length,
+      });
+    }
+
+    listing.dislikes.push(req.user.id);
+    listing.likes.pull(req.user.id);
+
+    const updatedListing = await listing.save();
+    res.status(200).json({
+      likes: updatedListing.likes.length,
+      dislikes: updatedListing.dislikes.length,
+    });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+export const getLikes = async (req, res) => {
+  try {
+    const listing = await Listing.findById(req.params.id);
+    if (!listing) {
+      return res.status(404).json({ message: "Listing not found" });
+    }
+
+    res.status(200).json({ likes: listing.likes.length });
+  } catch (error) {
+    console.error("Error getting likes:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const getDislikes = async (req, res) => {
+  try {
+    const listing = await Listing.findById(req.params.id);
+    if (!listing) {
+      return res.status(404).json({ message: "Listing not found" });
+    }
+
+    res.status(200).json({ dislikes: listing.dislikes.length });
+  } catch (error) {
+    console.error("Error getting dislikes:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

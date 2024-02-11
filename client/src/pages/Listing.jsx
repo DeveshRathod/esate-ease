@@ -1,18 +1,81 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { FaBath, FaBed, FaChair, FaParking } from "react-icons/fa";
 import Contact from "../components/Contact";
-import Loader from "../components/Loader"; // Assuming you have a Loader component
+import Loader from "../components/Loader";
+import { AiOutlineDislike, AiOutlineLike } from "react-icons/ai";
 
 export default function Listing() {
   const [listing, setListing] = useState(null);
-  const [loading, setLoading] = useState(true); // Set initial loading state to true
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [contact, setContact] = useState(false);
   const [showAllImages, setShowAllImages] = useState(false);
   const params = useParams();
   const { currentUser } = useSelector((state) => state.user);
+
+  const [likes, setLikes] = useState(0);
+  const [dislikes, setDislikes] = useState(0);
+
+  const handleLike = async () => {
+    try {
+      const res = await fetch(`/api/listing/like/${listing._id}`, {
+        method: "PUT",
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setLikes(data.likes);
+        setDislikes(data.dislikes);
+      } else {
+        console.error("Failed to like listing");
+      }
+    } catch (error) {
+      console.error("Error liking:", error);
+    }
+  };
+
+  const handleDislike = async () => {
+    try {
+      const res = await fetch(`/api/listing/dislike/${listing._id}`, {
+        method: "PUT",
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setLikes(data.likes);
+        setDislikes(data.dislikes);
+      } else {
+        console.error("Failed to dislike listing");
+      }
+    } catch (error) {
+      console.error("Error disliking:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (listing) {
+      const fetchData = async () => {
+        try {
+          const likesRes = await fetch(`/api/listing/likes/${listing._id}`);
+          const dislikesRes = await fetch(
+            `/api/listing/dislikes/${listing._id}`
+          );
+          if (likesRes.ok && dislikesRes.ok) {
+            const likesData = await likesRes.json();
+            const dislikesData = await dislikesRes.json();
+            setLikes(likesData.likes);
+            setDislikes(dislikesData.dislikes);
+          } else {
+            console.error("Failed to fetch likes or dislikes");
+          }
+        } catch (error) {
+          console.error("Error fetching likes/dislikes:", error);
+        }
+      };
+
+      fetchData();
+    }
+  }, [listing]);
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -25,7 +88,7 @@ export default function Listing() {
           return;
         }
         setListing(data);
-        setLoading(false); // Set loading to false when data is fetched
+        setLoading(false);
         setError(false);
       } catch (error) {
         setError(true);
@@ -33,13 +96,12 @@ export default function Listing() {
       }
     };
 
-    // Simulate loader delay
     const delay = setTimeout(() => {
       fetchListing();
       clearTimeout(delay);
     }, 1000);
 
-    return () => clearTimeout(delay); // Cleanup function to clear timeout
+    return () => clearTimeout(delay);
   }, [params.listingId]);
 
   return (
@@ -57,6 +119,7 @@ export default function Listing() {
               alt="First Image"
               className="lg:w-1/2 w-full h-auto rounded-lg shadow-lg mb-6 lg:mb-0"
             />
+
             <div className="lg:w-1/2 lg:pl-6">
               <div className="max-w-screen mx-auto mt-6">
                 <h1 className="text-3xl font-semibold text-gray-800 mb-4">
@@ -65,10 +128,10 @@ export default function Listing() {
 
                 <div className="flex items-center mb-4">
                   <p className="text-xl font-semibold text-gray-800 mr-4">
-                    $
+                    Rs.
                     {listing.offer
-                      ? listing.discountPrice.toLocaleString("en-US")
-                      : listing.regularPrice.toLocaleString("en-US")}
+                      ? listing.discountPrice.toLocaleString("en-IN")
+                      : listing.regularPrice.toLocaleString("en-IN")}
                   </p>
                   <p className="text-sm text-gray-600">
                     {listing.type === "rent" ? " / month" : ""}
@@ -95,6 +158,24 @@ export default function Listing() {
                     {listing.furnished ? "Furnished" : "Unfurnished"}
                   </li>
                 </ul>
+                {currentUser && (
+                  <div className="flex w-full justify-start gap-5 mt-2">
+                    <button
+                      className="flex items-center gap-1"
+                      onClick={handleLike}
+                    >
+                      <AiOutlineLike />
+                      <p>{likes}</p>
+                    </button>
+                    <button
+                      className="flex items-center gap-1"
+                      onClick={handleDislike}
+                    >
+                      <AiOutlineDislike />
+                      <p>{dislikes}</p>
+                    </button>
+                  </div>
+                )}
                 {currentUser &&
                   listing.userRef !== currentUser._id &&
                   !contact && (
