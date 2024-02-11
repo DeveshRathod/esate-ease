@@ -106,7 +106,6 @@ export default function Listing() {
 
   return (
     <main className="flex flex-col items-center">
-      {/* Loader */}
       {loading && <Loader />}
       {error && (
         <p className="text-center my-7 text-2xl">Something went wrong!</p>
@@ -136,6 +135,20 @@ export default function Listing() {
                   <p className="text-sm text-gray-600">
                     {listing.type === "rent" ? " / month" : ""}
                   </p>
+                </div>
+                <div className="flex gap-4 mb-2">
+                  <p className="bg-red-900 w-full max-w-[200px] text-white text-center p-1 rounded-md">
+                    {listing.type === "rent" ? "For Rent" : "For Sale"}
+                  </p>
+                  {listing.offer && (
+                    <p className="bg-green-900 w-full max-w-[200px] text-white text-center p-1 rounded-md">
+                      Rs.
+                      {(
+                        +listing.regularPrice - +listing.discountPrice
+                      ).toLocaleString("en-IN")}{" "}
+                      Off
+                    </p>
+                  )}
                 </div>
                 <p className="text-gray-700 mb-6">{listing.description}</p>
                 <ul className="text-sm text-gray-700 flex flex-wrap gap-4">

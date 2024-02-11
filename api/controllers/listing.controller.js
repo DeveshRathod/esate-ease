@@ -139,14 +139,11 @@ export const addlike = async (req, res) => {
     const listing = await Listing.findById(req.params.id);
 
     if (listing.likes.includes(req.user.id)) {
-      return res.status(200).json({
-        likes: listing.likes.length,
-        dislikes: listing.dislikes.length,
-      });
+      listing.likes.pull(req.user.id);
+    } else {
+      listing.likes.push(req.user.id);
+      listing.dislikes.pull(req.user.id);
     }
-
-    listing.likes.push(req.user.id);
-    listing.dislikes.pull(req.user.id);
 
     const updatedListing = await listing.save();
     res.status(200).json({
@@ -163,14 +160,11 @@ export const adddislike = async (req, res) => {
     const listing = await Listing.findById(req.params.id);
 
     if (listing.dislikes.includes(req.user.id)) {
-      return res.status(200).json({
-        likes: listing.likes.length,
-        dislikes: listing.dislikes.length,
-      });
+      listing.dislikes.pull(req.user.id);
+    } else {
+      listing.dislikes.push(req.user.id);
+      listing.likes.pull(req.user.id);
     }
-
-    listing.dislikes.push(req.user.id);
-    listing.likes.pull(req.user.id);
 
     const updatedListing = await listing.save();
     res.status(200).json({

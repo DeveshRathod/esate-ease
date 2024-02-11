@@ -153,7 +153,7 @@ const Search = () => {
           {showMore && (
             <button
               onClick={onShowMoreClick}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md mt-4"
+              className="bg-[#ac7e60] text-white px-4 py-2 rounded-md mt-4"
             >
               Show more
             </button>
