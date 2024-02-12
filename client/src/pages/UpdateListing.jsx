@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import ListingItem from "../components/ListingItem";
-import Loader from "../components/Loader";
 import {
   getDownloadURL,
   getStorage,

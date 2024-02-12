@@ -3,6 +3,24 @@ import bcryptjs from "bcryptjs";
 import errorHandler from "../utils/error.js";
 import jwt from "jsonwebtoken";
 
+export const checkme = async (req, res, next) => {
+  const userID = req.params.id;
+  try {
+    const isUser = await User.findOne({ _id: userID });
+    if (!isUser) {
+      return res.status(404).send(false);
+    }
+    const token = jwt.sign({ id: userID }, process.env.JWT_SECRET);
+
+    res
+      .cookie("access_token", token, { httpOnly: true })
+      .status(200)
+      .send(true);
+  } catch (error) {
+    console.error("Error generating token:", error);
+    return res.status(500).send(false);
+  }
+};
 export const signup = async (req, res, next) => {
   const { username, email, password, avatar } = req.body;
   const hashedPassword = bcryptjs.hashSync(password, 10);
