@@ -46,7 +46,6 @@ export default function ListingItem({ listing }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log(listing._id);
         const likesRes = await fetch(`/api/listing/likes/${listing._id}`);
         const dislikesRes = await fetch(`/api/listing/dislikes/${listing._id}`);
         if (likesRes.ok && dislikesRes.ok) {
